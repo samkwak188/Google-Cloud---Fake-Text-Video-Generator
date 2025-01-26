@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iMessage Creator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/imessage.css') }}?v={{ range(1, 999999) | random }}" type="text/css">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+</head>
+<body>
+    <div class="stars">
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+    </div>
+    <div class="page-container">
+        <!-- Guide Section -->
+        <div class="guide-section">
+            <h1>Fake Text Story Video Generator</h1>
+            <p>Welcome to GoViral Wizard's Text Story Generator! Create engaging text message videos with realistic conversations.</p>
+            
+            <p>With our generator, you can:</p>
+            <ul>
+                <li>Create messages for both sender and receiver</li>
+                <li>Edit messages freely at any time</li>
+                <li>Add fun sound effects to individual messages</li>
+                <li>Choose from various voice actors for both participants</li>
+                <li>Select your preferred background video style</li>
+            </ul>
+            
+            <p><strong>Important:</strong> To use voice features, you'll need an ElevenLabs account. Enter your API key and ensure you have the "Adam" and "Natalie" voices added to your voice library.</p>
+            
+            <p>Ready to create your viral text story? Start typing your messages and let your creativity flow!</p>
+        </div>
+
+        <!-- Chat Section -->
+        <div class="chat-section">
+            <div class="container" id="chatContainer">
+                <div class="header">
+                    <div class="header-left">
+                        <div class="back-button">‹</div>
+                    </div>
+                    <div class="header-center">
+                        <div class="profile-image" id="profileImageContainer">
+                            <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="Profile" id="profileImage">
+                            <input type="file" id="profileUpload" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="header-text" id="headerName" contenteditable="true" spellcheck="false">
+                            John Doe
+                        </div>
+                    </div>
+                    <div class="header-right">
+                    </div>
+                </div>
+                <div class="message-container" id="messageContainer">
+                    <div class="dynamic-container">
+                        <!-- Messages will be added here -->
+                    </div>
+                </div>
+                <div class="input-area">
+                    <div class="imessage-input">
+                        <input type="text" id="messageInput" placeholder="iMessage">
+                        <button id="senderToggle">⇄</button>
+                        <button id="addMessage">Send</button>
+                    </div>
+                    <button class="generate-button" id="generateBtn">Generate Video</button>
+                </div>
+            </div>
+            
+            <!-- Settings wrapper -->
+            <div class="settings-wrapper">
+                <div class="voice-settings">
+                    <h3>Choose Voice Actors</h3>
+                    <div class="api-key-section">
+                        <input type="text" id="elevenLabsKey" placeholder="Enter ElevenLabs API Key" class="api-key-input">
+                        <button onclick="fetchVoiceIds()" class="fetch-voices-btn">Fetch Voices</button>
+                    </div>
+                    <div class="voice-selector-container">
+                        <div class="voice-selector">
+                            <label for="senderVoice">Sender Voice:</label>
+                            <select id="senderVoice">
+                                <option value="male">Male (Adam)</option>
+                                <option value="female">Female (Natalie)</option>
+                                <option value="brian">Male (Brian)</option>
+                                <option value="laura">Female (Laura)</option>
+                            </select>
+                        </div>
+                        <div class="voice-selector">
+                            <label for="receiverVoice">Receiver Voice:</label>
+                            <select id="receiverVoice">
+                                <option value="female">Female (Natalie)</option>
+                                <option value="male">Male (Adam)</option>
+                                <option value="brian">Male (Brian)</option>
+                                <option value="laura">Female (Laura)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-selection">
+                    <h3>Select Background Video</h3>
+                    <div class="video-previews">
+                        <div class="video-option">
+                            <video src="{{ url_for('static', filename='videos/background.mp4') }}" loop muted class="preview-video"></video>
+                            <input type="radio" name="background" value="background" checked>
+                            <label>Style 1</label>
+                        </div>
+                        <div class="video-option">
+                            <video src="{{ url_for('static', filename='videos/background_1.mp4') }}" loop muted class="preview-video"></video>
+                            <input type="radio" name="background" value="background_1">
+                            <label>Style 2</label>
+                        </div>
+                        <div class="video-option">
+                            <video src="{{ url_for('static', filename='videos/background_2.mp4') }}" loop muted class="preview-video"></video>
+                            <input type="radio" name="background" value="background_2">
+                            <label>Style 3</label>
+                        </div>
+                        <div class="video-option">
+                            <video src="{{ url_for('static', filename='videos/background_3.mp4') }}" loop muted class="preview-video"></video>
+                            <input type="radio" name="background" value="background_3">
+                            <label>Style 4</label>
+                        </div>
+                        <div class="video-option">
+                            <video src="{{ url_for('static', filename='videos/background_4.mp4') }}" loop muted class="preview-video"></video>
+                            <input type="radio" name="background" value="background_4">
+                            <label>Style 5</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add this after the chat-section div -->
+        <div class="steps-guide">
+            <h2>How to Use</h2>
+            <div class="step">
+                <div class="step-number">1</div>
+                <p>Type your message in the input box and press Enter or click Send</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <p>Click on any message to edit, add sound effects, or manage message options</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <p>Click on profile image to upload your own profile image. Click on header name to edit your name.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <p>Enter your ElevenLabs API key and click "Fetch Voices" to set up voice actors</p>
+            </div>
+            <div class="step">
+                <div class="step-number">5</div>
+                <p>Select voice actors for both sender and receiver</p>
+            </div>
+            <div class="step">
+                <div class="step-number">6</div>
+                <p>Choose your preferred background video style</p>
+            </div>
+            <div class="step">
+                <div class="step-number">7</div>
+                <p>Click "Generate Video" to create your text message video</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let messages = [];
+        let isSender = true;
+        let isGenerating = false;
+
+        const messageInput = document.getElementById('messageInput');
+        const messageContainer = document.getElementById('messageContainer');
+        const chatContainer = document.getElementById('chatContainer');
+        const senderToggle = document.getElementById('senderToggle');
+        const addMessageBtn = document.getElementById('addMessage');
+        const generateBtn = document.getElementById('generateBtn');
+
+        function scrollToBottom() {
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        // Function to update messages array and ensure synchronization
+        function updateMessagesArray() {
+            const dynamicContainer = document.querySelector('.dynamic-container');
+            messages = Array.from(dynamicContainer.children)
+                .map(messageDiv => {
+                    const text = messageDiv.textContent.trim();
+                    if (!text) return null;
+                    
+                    return {
+                        id: messageDiv.getAttribute('data-id') || Date.now().toString(),
+                        text: text,
+                        is_sender: messageDiv.classList.contains('sender'),
+                        soundEffect: messageDiv.getAttribute('data-sound-effect') || null
+                    };
+                })
+                .filter(msg => msg !== null);
+            
+            console.log('Updated messages array:', messages);
+        }
+
+        // Modify addMessage function
+        function addMessage() {
+            const text = messageInput.value.trim();
+            if (!text) return;
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isSender ? 'sender' : 'receiver'}`;
+            messageDiv.textContent = text;
+            messageDiv.setAttribute('data-id', Date.now());
+            
+            const dynamicContainer = document.querySelector('.dynamic-container');
+            dynamicContainer.appendChild(messageDiv);
+
+            updateMessagesArray(); // Update messages array after adding
+            
+            messageInput.value = '';
+            messageInput.focus();
+            scrollToBottom();
+        }
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addMessage();
+        });
+
+        senderToggle.addEventListener('click', () => {
+            isSender = !isSender;
+            senderToggle.classList.toggle('receiver');
+        });
+
+        addMessageBtn.addEventListener('click', addMessage);
+        generateBtn.addEventListener('click', async () => {
+            if (isGenerating) return;
+            isGenerating = true;
+            generateBtn.textContent = 'Generating...';
+            
+            try {
+                updateMessagesArray();
+                
+                if (!messages.length) {
+                    throw new Error('Please add at least one message');
+                }
+                
+                const apiKey = document.getElementById('elevenLabsKey').value;
+                if (!apiKey) {
+                    throw new Error('Please enter your ElevenLabs API key');
+                }
+                
+                const requestData = {
+                    messages: messages,
+                    profileImage: localStorage.getItem('profileImage') || '',
+                    headerName: localStorage.getItem('headerName') || 'John Doe',
+                    voiceSettings: {
+                        apiKey: apiKey,
+                        voiceMap: voiceMap,
+                        sender: document.getElementById('senderVoice').value,
+                        receiver: document.getElementById('receiverVoice').value
+                    },
+                    backgroundVideo: document.querySelector('input[name="background"]:checked').value
+                };
+                
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Video generation failed');
+                }
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'output_video.mp4';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                alert('Failed to generate video: ' + error.message);
+            } finally {
+                generateBtn.textContent = 'Generate Video';
+                isGenerating = false;
+            }
+        });
+        
+        // Initialize scroll position when page loads
+        window.addEventListener('load', scrollToBottom);
+
+        // Message editing functionality
+        let currentOptionsMenu = null;
+
+        function createOptionsMenu() {
+            const menu = document.createElement('div');
+            menu.className = 'message-options';
+            menu.innerHTML = `
+                <button class="edit">Edit</button>
+                <button class="switch">Switch Side</button>
+                <button class="add-textbox-above">Add Textbox Above</button>
+                <button class="add-textbox-below">Add Textbox Below</button>
+                <button class="sound-effect">Sound Effects</button>
+                <button class="delete">Delete</button>
+            `;
+            return menu;
+        }
+
+        function hideOptionsMenu() {
+            if (currentOptionsMenu) {
+                currentOptionsMenu.style.display = 'none';
+            }
+        }
+
+        function handleMessageClick(e) {
+            const messageDiv = e.target.closest('.message');
+            if (!messageDiv) return;
+
+            hideOptionsMenu();
+
+            // Create new options menu
+            const optionsMenu = createOptionsMenu();
+            document.body.appendChild(optionsMenu);  // Append to body instead of messageContainer
+            currentOptionsMenu = optionsMenu;
+
+            // Position the menu relative to the viewport
+            const rect = messageDiv.getBoundingClientRect();
+            
+            optionsMenu.style.position = 'fixed';  // Use fixed positioning
+            optionsMenu.style.display = 'block';
+            
+            // Position menu below the message
+            optionsMenu.style.top = `${rect.bottom}px`;
+            
+            // Horizontal positioning
+            if (messageDiv.classList.contains('sender')) {
+                optionsMenu.style.right = `${window.innerWidth - rect.right}px`;
+                optionsMenu.style.left = 'auto';
+            } else {
+                optionsMenu.style.left = `${rect.left}px`;
+                optionsMenu.style.right = 'auto';
+            }
+
+            // Handle options
+            optionsMenu.querySelector('.edit').onclick = (e) => {
+                e.stopPropagation();
+                messageDiv.contentEditable = true;
+                messageDiv.focus();
+                hideOptionsMenu();
+                
+                messageDiv.addEventListener('input', () => {
+                    updateMessagesArray();
+                });
+                
+                messageDiv.onblur = () => {
+                    messageDiv.contentEditable = false;
+                    updateMessagesArray();
+                };
+            };
+
+            optionsMenu.querySelector('.switch').onclick = (e) => {
+                e.stopPropagation();
+                const isSenderMessage = messageDiv.classList.contains('sender');
+                messageDiv.classList.toggle('sender');
+                messageDiv.classList.toggle('receiver');
+                
+                const index = Array.from(messageDiv.parentNode.children).indexOf(messageDiv);
+                if (index !== -1 && messages[index]) {
+                    messages[index].is_sender = !isSenderMessage;
+                }
+                hideOptionsMenu();
+            };
+
+            optionsMenu.querySelector('.add-textbox-above').onclick = (e) => {
+                e.stopPropagation();
+                const newMessage = document.createElement('div');
+                const messageId = Date.now();
+                newMessage.className = `message ${messageDiv.classList.contains('sender') ? 'sender' : 'receiver'}`;
+                newMessage.setAttribute('data-id', messageId);
+                messageDiv.parentNode.insertBefore(newMessage, messageDiv);
+                
+                newMessage.contentEditable = true;
+                newMessage.focus();
+                
+                newMessage.addEventListener('input', () => {
+                    updateMessagesArray();
+                });
+                
+                newMessage.onblur = () => {
+                    newMessage.contentEditable = false;
+                    if (!newMessage.textContent.trim()) {
+                        newMessage.remove();
+                    }
+                    updateMessagesArray();
+                };
+                
+                hideOptionsMenu();
+            };
+
+            optionsMenu.querySelector('.add-textbox-below').onclick = (e) => {
+                e.stopPropagation();
+                const newMessage = document.createElement('div');
+                const messageId = Date.now();
+                newMessage.className = `message ${messageDiv.classList.contains('sender') ? 'sender' : 'receiver'}`;
+                newMessage.setAttribute('data-id', messageId);
+                
+                if (messageDiv.nextSibling) {
+                    messageDiv.parentNode.insertBefore(newMessage, messageDiv.nextSibling);
+                } else {
+                    messageDiv.parentNode.appendChild(newMessage);
+                }
+                
+                newMessage.contentEditable = true;
+                newMessage.focus();
+                
+                newMessage.addEventListener('input', () => {
+                    updateMessagesArray();
+                });
+                
+                newMessage.onblur = () => {
+                    newMessage.contentEditable = false;
+                    if (!newMessage.textContent.trim()) {
+                        newMessage.remove();
+                    }
+                    updateMessagesArray();
+                };
+                
+                hideOptionsMenu();
+            };
+
+            optionsMenu.querySelector('.sound-effect').onclick = (e) => {
+                e.stopPropagation();
+                
+                const existingSubmenu = document.querySelector('.sound-effect-submenu');
+                if (existingSubmenu) existingSubmenu.remove();
+                
+                const submenu = createSoundEffectSubmenu(messageDiv);
+                document.body.appendChild(submenu);  // Append to body instead of messageContainer
+                
+                const buttonRect = e.target.getBoundingClientRect();
+                
+                submenu.style.position = 'fixed';  // Use fixed positioning
+                submenu.style.left = `${buttonRect.right}px`;
+                submenu.style.top = `${buttonRect.top}px`;
+                
+                submenu.querySelectorAll('.effect-option').forEach(option => {
+                    option.onclick = (event) => {
+                        event.stopPropagation();
+                        const selectedEffect = event.target.dataset.effect;
+                        
+                        // Update the DOM element with the sound effect
+                        messageDiv.setAttribute('data-sound-effect', selectedEffect === 'none' ? '' : selectedEffect);
+                        
+                        // Update the messages array
+                        updateMessagesArray();
+                        
+                        // Update checkmarks in real-time
+                        submenu.querySelectorAll('.effect-option').forEach(opt => {
+                            opt.textContent = `${opt.dataset.effect.charAt(0).toUpperCase() + 
+                                opt.dataset.effect.slice(1)} ${opt.dataset.effect === selectedEffect ? '✓' : ''}`;
+                        });
+                    };
+                });
+                
+                document.addEventListener('click', function closeSubmenu(event) {
+                    if (!submenu.contains(event.target) && !e.target.contains(event.target)) {
+                        submenu.remove();
+                        hideOptionsMenu();
+                        document.removeEventListener('click', closeSubmenu);
+                    }
+                });
+            };
+
+            optionsMenu.querySelector('.delete').onclick = (e) => {
+                e.stopPropagation();
+                const index = Array.from(messageDiv.parentNode.children).indexOf(messageDiv);
+                if (index !== -1) {
+                    messages.splice(index, 1);
+                    messageDiv.remove();
+                }
+                hideOptionsMenu();
+            };
+        }
+
+        // Hide options menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.message') && !e.target.closest('.message-options')) {
+                hideOptionsMenu();
+            }
+        });
+
+        // Add click listener to message container
+        messageContainer.addEventListener('click', handleMessageClick);
+
+        // Profile image and name editing
+        const profileImageContainer = document.getElementById('profileImageContainer');
+        const profileUpload = document.getElementById('profileUpload');
+        const profileImage = document.getElementById('profileImage');
+        const headerName = document.getElementById('headerName');
+
+        // Clear any existing storage and set defaults on page load
+        window.addEventListener('load', () => {
+            localStorage.clear();  // Clear all stored values
+            profileImage.src = "{{ url_for('static', filename='images/profile.jpg') }}";
+            headerName.textContent = 'John Doe';
+            // Set initial defaults in storage
+            localStorage.setItem('profileImage', profileImage.src);
+            localStorage.setItem('headerName', 'John Doe');
+        });
+
+        // Handle profile image upload
+        profileImageContainer.addEventListener('click', () => {
+            profileUpload.click();
+        });
+
+        profileUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    profileImage.src = e.target.result;
+                    localStorage.setItem('profileImage', e.target.result);  // Save current change
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle name editing
+        headerName.addEventListener('blur', () => {
+            if (!headerName.textContent.trim()) {
+                headerName.textContent = 'John Doe';
+            }
+            localStorage.setItem('headerName', headerName.textContent);  // Save current change
+        });
+
+        headerName.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                headerName.blur();
+            }
+        });
+
+        function createSoundEffectSubmenu(messageDiv) {
+            const submenu = document.createElement('div');
+            submenu.className = 'sound-effect-submenu';
+            
+            // Get current effect from the DOM element
+            const currentEffect = messageDiv.getAttribute('data-sound-effect') || 'none';
+
+            submenu.innerHTML = `
+                <button class="effect-option" data-effect="none">
+                    None ${currentEffect === 'none' ? '✓' : ''}
+                </button>
+                <button class="effect-option" data-effect="vineboom">
+                    Vineboom ${currentEffect === 'vineboom' ? '✓' : ''}
+                </button>
+                <button class="effect-option" data-effect="notification">
+                    Notification ${currentEffect === 'notification' ? '✓' : ''}
+                </button>
+                <button class="effect-option" data-effect="rizz">
+                    Rizz ${currentEffect === 'rizz' ? '✓' : ''}
+                </button>
+            `;
+            return submenu;
+        }
+
+        document.querySelectorAll('.preview-video').forEach(video => {
+            video.addEventListener('mouseover', function() {
+                this.play();
+            });
+            
+            video.addEventListener('mouseout', function() {
+                this.pause();
+                this.currentTime = 0;
+            });
+        });
+
+        // Add these functions to handle voice fetching
+        let voiceMap = {};
+
+        async function fetchVoiceIds() {
+            const apiKey = document.getElementById('elevenLabsKey').value.trim();
+            if (!apiKey) {
+                alert('Please enter your ElevenLabs API key');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/fetch-voices', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ apiKey: apiKey })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch voices');
+                }
+
+                const voices = await response.json();
+                voiceMap = {};
+                
+                // Map voice names to IDs
+                voices.forEach(voice => {
+                    const nameLower = voice.name.toLowerCase();
+                    if (nameLower.includes('Adam')) voiceMap['male'] = voice.id;
+                    if (nameLower.includes('Natalie')) voiceMap['female'] = voice.id;
+                    if (nameLower.includes('Brian')) voiceMap['brian'] = voice.id;
+                    if (nameLower.includes('Laura')) voiceMap['laura'] = voice.id;
+                });
+
+                // Save to localStorage
+                localStorage.setItem('elevenLabsKey', apiKey);
+                localStorage.setItem('voiceMap', JSON.stringify(voiceMap));
+                
+                alert('Voice IDs successfully fetched!');
+            } catch (error) {
+                console.error('Error fetching voices:', error);
+                alert('Failed to fetch voices. Please check your API key.');
+            }
+        }
+
+        // Load saved data on page load
+        window.addEventListener('load', () => {
+            const savedKey = localStorage.getItem('elevenLabsKey');
+            const savedVoiceMap = localStorage.getItem('voiceMap');
+            
+            if (savedKey) {
+                document.getElementById('elevenLabsKey').value = savedKey;
+            }
+            if (savedVoiceMap) {
+                voiceMap = JSON.parse(savedVoiceMap);
+            }
+        });
+    </script>
+</body>
+</html> 

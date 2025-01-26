@@ -1,0 +1,10 @@
+flask
+flask-cors
+google-cloud-storage
+moviepy
+gtts
+selenium
+Pillow
+requests
+python-dotenv
+gunicorn
