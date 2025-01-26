@@ -11,4 +11,6 @@ The bucket should contain the following background videos:
 - background_1.mp4
 - background_2.mp4
 - background_3.mp4
-- background_4.mp4 
+- background_4.mp4
+
+As I mentioned earlier, the preset videos can be found here.
