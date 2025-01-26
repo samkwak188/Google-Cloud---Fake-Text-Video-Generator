@@ -31,18 +31,28 @@ CORS(app, resources={
 # Global list to track temporary files for cleanup
 temp_files = []
 
-# Use environment variables for sensitive information
-GOOGLE_CREDENTIALS = os.environ.get('GOOGLE_CREDENTIALS')
-if GOOGLE_CREDENTIALS:
+# Google Cloud Credentials and Storage Setup
+try:
+    GOOGLE_CREDENTIALS = os.environ.get('GOOGLE_CREDENTIALS')
+    BUCKET_NAME = os.environ.get('BUCKET_NAME')
+    
+    if not GOOGLE_CREDENTIALS:
+        raise ValueError("GOOGLE_CREDENTIALS environment variable is not set")
+    if not BUCKET_NAME:
+        raise ValueError("BUCKET_NAME environment variable is not set")
+    
     # Create a temporary file to store the credentials
     credentials_temp = tempfile.NamedTemporaryFile(delete=False)
     credentials_temp.write(GOOGLE_CREDENTIALS.encode())
     credentials_temp.close()
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_temp.name
-
-# Initialize storage client
-storage_client = storage.Client()
-BUCKET_NAME = os.environ.get('BUCKET_NAME', 'faketextvidgen5176')
+    
+    # Initialize storage client
+    storage_client = storage.Client()
+    
+except Exception as e:
+    print(f"Error initializing Google Cloud Storage: {e}")
+    raise
 
 # Update video paths to use environment variable for bucket name
 BACKGROUND_VIDEOS = {
